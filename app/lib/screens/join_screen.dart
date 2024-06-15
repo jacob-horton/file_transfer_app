@@ -1,9 +1,12 @@
 import 'dart:ui';
 
 import 'package:file_transfer/services/webrtc.dart';
+import 'package:file_transfer/widgets/button.dart';
 import 'package:file_transfer/widgets/text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:heroicons/heroicons.dart';
 
 class RoomScreen extends StatefulWidget {
   const RoomScreen({super.key});
@@ -56,11 +59,11 @@ class _RoomScreenState extends State<RoomScreen> {
                   children: [
                     const CustomTextField(hintText: "Room code"),
                     const SizedBox(height: 10.0),
-                    FilledButton(
-                      child: const Text("Join"),
-                      onPressed: () {
-                        print('hi');
-                      },
+                    CustomButton(
+                      type: CustomButtonType.main,
+                      text: "Join",
+                      heroIcon: HeroIcons.arrowRightCircle,
+                      onPressed: () {},
                     ),
                   ],
                 ),
@@ -73,25 +76,21 @@ class _RoomScreenState extends State<RoomScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: OutlinedButton(
-                        child: const Text("Help"),
-                        onPressed: () {
-                          print("hi");
-                        },
+                      child: CustomButton(
+                        type: CustomButtonType.secondary,
+                        text: "Help",
+                        heroIcon: HeroIcons.questionMarkCircle,
+                        onPressed: () {},
                       ),
                     ),
                     const SizedBox(width: 10.0),
                     Expanded(
                       flex: 2,
-                      child: FilledButton(
-                        style: FilledButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.tertiary,
-                        ),
-                        onPressed: () {
-                          print("hi");
-                        },
-                        child: const Text("Create"),
+                      child: CustomButton(
+                        type: CustomButtonType.cta,
+                        text: "Create",
+                        heroIcon: HeroIcons.plusCircle,
+                        onPressed: () {},
                       ),
                     ),
                   ],
@@ -231,20 +230,20 @@ class MyFloatingActionButton extends StatelessWidget {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Expanded(
-                            child: OutlinedButton(
+                            child: CustomButton(
+                              text: "Cancel",
+                              heroIcon: HeroIcons.xCircle,
                               onPressed: () => Navigator.of(context).pop(),
-                              child: const Text("Cancel"),
+                              type: CustomButtonType.secondary,
                             ),
                           ),
                           const SizedBox(width: 10.0),
                           Expanded(
-                            child: FilledButton(
-                              onPressed: () {},
-                              style: FilledButton.styleFrom(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.tertiary,
-                              ),
-                              child: const Text("Send"),
+                            child: CustomButton(
+                              text: "Send",
+                              heroIcon: HeroIcons.paperAirplane,
+                              onPressed: () => {},
+                              type: CustomButtonType.cta,
                             ),
                           ),
                         ],
