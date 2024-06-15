@@ -46,7 +46,8 @@ class _RoomScreenState extends State<RoomScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(30.0),
-          child: Stack(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomTextField(
                 hintText: "Username",
@@ -72,45 +73,39 @@ class _RoomScreenState extends State<RoomScreen> {
                   ],
                 ),
               ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: CustomButton(
-                        type: CustomButtonType.secondary,
-                        text: "Help",
-                        heroIcon: HeroIcons.questionMarkCircle,
-                        onPressed: () {},
-                      ),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomButton(
+                      type: CustomButtonType.secondary,
+                      text: "Help",
+                      heroIcon: HeroIcons.questionMarkCircle,
+                      onPressed: () {},
                     ),
-                    const SizedBox(width: 10.0),
-                    Expanded(
-                      flex: 2,
-                      child: CustomButton(
-                        type: CustomButtonType.cta,
-                        text: "Create",
-                        heroIcon: HeroIcons.plusCircle,
-                        onPressed: () {
-                          showBottomModal(
-                            context: context,
-                            title: "Confirm send",
-                            // TODO: disable when sending/receiving
-                            canClose: true,
-                            child: const ConfirmSend(
-                              numPeople: 2,
-                              numImages: 24,
-                              numFiles: 6,
-                            ),
-                          );
-                        },
-                      ),
+                  ),
+                  const SizedBox(width: 10.0),
+                  Expanded(
+                    flex: 2,
+                    child: CustomButton(
+                      type: CustomButtonType.cta,
+                      text: "Create",
+                      heroIcon: HeroIcons.plusCircle,
+                      onPressed: () {
+                        showBottomModal(
+                          context: context,
+                          title: "Confirm send",
+                          // TODO: disable when sending/receiving
+                          canClose: true,
+                          child: const ConfirmSend(
+                            numPeople: 2,
+                            numImages: 24,
+                            numFiles: 6,
+                          ),
+                        );
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               if (incomingSDPOffer != null)
                 Positioned(
