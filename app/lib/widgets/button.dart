@@ -32,7 +32,7 @@ class _CustomButtonState extends State<CustomButton> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         HeroIcon(widget.heroIcon),
-        const SizedBox(width: 4.0),
+        const SizedBox(width: 5.0),
         Text(widget.text),
         const SizedBox(width: 2.0), // Visual balance
       ],

@@ -33,6 +33,14 @@ class FileShareApp extends StatelessWidget {
           fontWeight: FontWeight.w700,
           fontSize: 30.0,
         ),
+        titleMedium: GoogleFonts.poppins(
+          fontWeight: FontWeight.w700,
+          fontSize: 18.0,
+        ),
+        bodyLarge: GoogleFonts.poppins(
+          fontWeight: FontWeight.w700,
+          color: accent,
+        ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextField extends StatefulWidget {
   final String? hintText;
-  const CustomTextField({super.key, this.hintText});
+  final RegExp? allowedPattern;
+
+  const CustomTextField({super.key, this.hintText, this.allowedPattern});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -21,8 +24,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
-        const TextField(
-          decoration: InputDecoration(
+        TextField(
+          style: Theme.of(context).textTheme.bodyMedium,
+          inputFormatters: widget.allowedPattern != null
+              ? [FilteringTextInputFormatter.allow(widget.allowedPattern!)]
+              : [],
+          decoration: const InputDecoration(
             contentPadding: EdgeInsets.symmetric(
               horizontal: 15.0,
             ),
