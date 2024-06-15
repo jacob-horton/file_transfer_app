@@ -5,6 +5,7 @@ import 'package:file_transfer/widgets/confirm_send.dart';
 import 'package:file_transfer/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RoomScreen extends StatefulWidget {
   const RoomScreen({super.key});
@@ -17,13 +18,21 @@ class _RoomScreenState extends State<RoomScreen> {
   late WebRTCListener _webRTCListener;
   dynamic incomingSDPOffer;
 
+  final TextEditingController _usernameController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    setupWebRTCHandler();
+    _setupWebRTCHandler();
+    _loadUsername();
   }
 
-  setupWebRTCHandler() async {
+  void _loadUsername() async {
+    final prefs = await SharedPreferences.getInstance();
+    _usernameController.text = prefs.getString('username') ?? '';
+  }
+
+  _setupWebRTCHandler() async {
     _webRTCListener = WebRTCListener(
       onIncomingRequest: (offer) => setState(() => incomingSDPOffer = offer),
     );
@@ -52,6 +61,13 @@ class _RoomScreenState extends State<RoomScreen> {
               CustomTextField(
                 hintText: "Username",
                 allowedPattern: RegExp("[a-zA-Z0-9-_]"),
+                icon: const HeroIcon(HeroIcons.pencil, size: 18.0),
+                controller: _usernameController,
+                onChanged: (value) async {
+                  // TODO: debounce
+                  final prefs = await SharedPreferences.getInstance();
+                  prefs.setString('username', value);
+                },
               ),
               Center(
                 child: Column(
@@ -91,6 +107,9 @@ class _RoomScreenState extends State<RoomScreen> {
                       text: "Create",
                       heroIcon: HeroIcons.plusCircle,
                       onPressed: () {
+                        // Unfocus any text fields so keyboard doesn't pop back up after opening modal
+                        FocusManager.instance.primaryFocus?.unfocus();
+
                         showBottomModal(
                           context: context,
                           title: "Confirm send",

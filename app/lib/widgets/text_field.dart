@@ -4,14 +4,27 @@ import 'package:flutter/services.dart';
 class CustomTextField extends StatefulWidget {
   final String? hintText;
   final RegExp? allowedPattern;
+  final Widget? icon;
+  final TextEditingController? controller;
 
-  const CustomTextField({super.key, this.hintText, this.allowedPattern});
+  final void Function(String)? onChanged;
+
+  const CustomTextField({
+    super.key,
+    this.hintText,
+    this.allowedPattern,
+    this.icon,
+    this.onChanged,
+    this.controller,
+  });
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
+  static const maxLength = 64;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -25,12 +38,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
           ),
         ),
         TextField(
+          controller: widget.controller,
+          onChanged: widget.onChanged,
           style: Theme.of(context).textTheme.bodyMedium,
           inputFormatters: widget.allowedPattern != null
-              ? [FilteringTextInputFormatter.allow(widget.allowedPattern!)]
-              : [],
-          decoration: const InputDecoration(
-            contentPadding: EdgeInsets.symmetric(
+              ? [
+                  FilteringTextInputFormatter.allow(widget.allowedPattern!),
+                  LengthLimitingTextInputFormatter(maxLength),
+                ]
+              : [LengthLimitingTextInputFormatter(maxLength)],
+          decoration: InputDecoration(
+            suffixIcon: widget.icon,
+            contentPadding: const EdgeInsets.symmetric(
               horizontal: 15.0,
             ),
           ),
