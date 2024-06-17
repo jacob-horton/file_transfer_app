@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 class CustomTextField extends StatefulWidget {
   final String? hintText;
+  final String? labelText;
   final RegExp? allowedPattern;
   final Widget? icon;
   final TextEditingController? controller;
@@ -12,6 +13,7 @@ class CustomTextField extends StatefulWidget {
   const CustomTextField({
     super.key,
     this.hintText,
+    this.labelText,
     this.allowedPattern,
     this.icon,
     this.onChanged,
@@ -33,7 +35,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         Padding(
           padding: const EdgeInsets.only(left: 5.0, bottom: 2.0),
           child: Text(
-            widget.hintText ?? '',
+            widget.labelText ?? '',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -48,6 +50,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 ]
               : [LengthLimitingTextInputFormatter(maxLength)],
           decoration: InputDecoration(
+            hintText: widget.hintText,
+            hintStyle: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(color: Colors.black.withAlpha(50)),
             suffixIcon: widget.icon,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 15.0,

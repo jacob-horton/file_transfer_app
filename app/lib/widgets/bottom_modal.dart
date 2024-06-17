@@ -75,7 +75,11 @@ class _BottomModalState extends State<BottomModal> {
                           minimumSize: Size.zero,
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
-                        icon: const HeroIcon(HeroIcons.xMark, size: 18.0),
+                        icon: const HeroIcon(
+                          HeroIcons.xMark,
+                          size: 18.0,
+                          style: HeroIconStyle.micro,
+                        ),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                   ],

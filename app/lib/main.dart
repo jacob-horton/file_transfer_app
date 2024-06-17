@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'screens/join_screen.dart';
@@ -16,6 +17,12 @@ class FileShareApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SignallingService.instance.init(websocketUrl: websocketUrl);
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
     const text = Color(0xff0f3346);
     const darkerBackground = Color(0xfff3deca);
     const background = Color(0xfffff7e5);
@@ -31,7 +38,7 @@ class FileShareApp extends StatelessWidget {
       ).copyWith(
         titleLarge: GoogleFonts.poppins(
           fontWeight: FontWeight.w700,
-          fontSize: 30.0,
+          fontSize: 26.0,
         ),
         titleMedium: GoogleFonts.poppins(
           fontWeight: FontWeight.w700,
@@ -84,7 +91,7 @@ class FileShareApp extends StatelessWidget {
     return MaterialApp(
       theme: theme,
       themeMode: ThemeMode.light,
-      home: const RoomScreen(),
+      home: const JoinScreen(),
     );
   }
 }

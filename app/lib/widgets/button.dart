@@ -10,14 +10,14 @@ enum CustomButtonType {
 class CustomButton extends StatefulWidget {
   final void Function() onPressed;
   final HeroIcons heroIcon;
-  final String text;
+  final String? text;
   final CustomButtonType type;
 
   const CustomButton({
     super.key,
     required this.onPressed,
     required this.heroIcon,
-    required this.text,
+    this.text,
     required this.type,
   });
 
@@ -32,9 +32,12 @@ class _CustomButtonState extends State<CustomButton> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         HeroIcon(widget.heroIcon),
-        const SizedBox(width: 5.0),
-        Text(widget.text),
-        const SizedBox(width: 2.0), // Visual balance
+        if (widget.text != null)
+          Row(children: [
+            const SizedBox(width: 5.0),
+            Text(widget.text!),
+            const SizedBox(width: 2.0), // Visual balance
+          ]),
       ],
     );
 

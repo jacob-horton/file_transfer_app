@@ -1,3 +1,4 @@
+import 'package:file_transfer/screens/room_screen.dart';
 import 'package:file_transfer/services/webrtc.dart';
 import 'package:file_transfer/widgets/bottom_modal.dart';
 import 'package:file_transfer/widgets/button.dart';
@@ -7,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class RoomScreen extends StatefulWidget {
-  const RoomScreen({super.key});
+class JoinScreen extends StatefulWidget {
+  const JoinScreen({super.key});
 
   @override
-  State<RoomScreen> createState() => _RoomScreenState();
+  State<JoinScreen> createState() => _JoinScreenState();
 }
 
-class _RoomScreenState extends State<RoomScreen> {
+class _JoinScreenState extends State<JoinScreen> {
   late WebRTCListener _webRTCListener;
   dynamic incomingSDPOffer;
 
@@ -45,21 +46,19 @@ class _RoomScreenState extends State<RoomScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Padding(
-          padding: EdgeInsets.only(top: 30.0),
-          child: Text("Welcome!"),
-        ),
+        toolbarHeight: 90,
+        title: const Text("Welcome!"),
         titleSpacing: 30.0,
-        primary: true,
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(30.0),
+          padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 30.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomTextField(
-                hintText: "Username",
+                hintText: "User123",
+                labelText: "Username",
                 allowedPattern: RegExp("[a-zA-Z0-9-_]"),
                 icon: const HeroIcon(HeroIcons.pencil, size: 18.0),
                 controller: _usernameController,
@@ -75,7 +74,8 @@ class _RoomScreenState extends State<RoomScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     CustomTextField(
-                      hintText: "Room code",
+                      hintText: "very-funny-elephant",
+                      labelText: "Room code",
                       // Pattern matches for word1-word2-word3-...
                       allowedPattern: RegExp(r"[a-zA-Z](-[a-zA-Z]+)*-?"),
                     ),
@@ -84,7 +84,13 @@ class _RoomScreenState extends State<RoomScreen> {
                       type: CustomButtonType.main,
                       text: "Join",
                       heroIcon: HeroIcons.arrowRightCircle,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const RoomScreen(),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
