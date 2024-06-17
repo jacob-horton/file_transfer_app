@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
@@ -34,12 +35,7 @@ class _AttachmentsState extends State<Attachments> {
               itemBuilder: (context, i) => Center(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
-                  child: Image.file(
-                    File(widget.imagePaths[i]),
-                    fit: BoxFit.cover,
-                    width: 75,
-                    height: 75,
-                  ),
+                  child: imagePreview(context, widget.imagePaths[i]),
                 ),
               ),
               separatorBuilder: (context, _) => const SizedBox(width: 10),
@@ -82,6 +78,60 @@ class _AttachmentsState extends State<Attachments> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget imagePreview(BuildContext context, String imagePath) {
+    const size = 75.0;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10.0),
+      child: ExtendedImage.file(
+        File(imagePath),
+        cacheWidth: 128,
+        fit: BoxFit.cover,
+        enableLoadState: true,
+        loadStateChanged: (ExtendedImageState state) {
+          switch (state.extendedImageLoadState) {
+            case LoadState.loading:
+              return SizedBox(
+                width: size,
+                height: size,
+                child: Container(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              );
+            case LoadState.completed:
+              return ExtendedRawImage(
+                image: state.extendedImageInfo?.image,
+                fit: BoxFit.cover,
+                width: size,
+                height: size,
+              );
+            case LoadState.failed:
+              return GestureDetector(
+                child: SizedBox(
+                  width: size,
+                  height: size,
+                  child: Container(
+                    color: Theme.of(context).colorScheme.secondary,
+                    child: Center(
+                      child: HeroIcon(
+                        HeroIcons.exclamationCircle,
+                        color: Theme.of(context).colorScheme.tertiary,
+                      ),
+                    ),
+                  ),
+                ),
+                onTap: () {
+                  state.reLoadImage();
+                },
+              );
+          }
+        },
+        width: size,
+        height: size,
+      ),
     );
   }
 }
