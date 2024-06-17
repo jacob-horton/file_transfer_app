@@ -24,7 +24,13 @@ class _RoomScreenState extends State<RoomScreen> {
   String roomCode = "very-funny-elephant";
 
   List<String> imagePaths = [];
-  List<String> filePaths = ['example-file-1.png', 'invoice.pdf'];
+  List<String> filePaths = [
+    'example-file-1.png',
+    'invoice.pdf',
+    'important-document.txt',
+    'presentation.pptx',
+    'another-file.xlsx',
+  ];
   List<String> people = [
     'Aaron',
     'Ellie',
@@ -66,15 +72,17 @@ class _RoomScreenState extends State<RoomScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 12.0), // Hack to get alignment better
             Text(
               "Room code",
+              // Hack to remove spacing between this and the title
               style:
-                  Theme.of(context).textTheme.bodySmall!.copyWith(height: 0.1),
+                  Theme.of(context).textTheme.bodySmall!.copyWith(height: 0.01),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(roomCode),
+                Text(roomCode, style: Theme.of(context).textTheme.titleMedium),
                 Padding(
                   padding: const EdgeInsets.only(right: 15.0),
                   child: IconButton(
@@ -106,9 +114,14 @@ class _RoomScreenState extends State<RoomScreen> {
                   filePaths: filePaths,
                 ),
               ),
-              Divider(color: Theme.of(context).colorScheme.secondary),
-              Expanded(child: People(people: people)),
-              const SizedBox(height: 15.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: Divider(color: Theme.of(context).colorScheme.secondary),
+              ),
+              Expanded(
+                child: People(people: people, selected: const [1, 3, 4]),
+              ),
+              const SizedBox(height: 25.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

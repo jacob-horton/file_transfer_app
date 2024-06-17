@@ -24,7 +24,7 @@ class _AttachmentsState extends State<Attachments> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Attachments"),
+        Text("Attachments", style: Theme.of(context).textTheme.titleSmall),
         SizedBox(
           height: 80,
           // TODO: not working
@@ -65,13 +65,12 @@ class _AttachmentsState extends State<Attachments> {
                       icon: const HeroIcon(
                         HeroIcons.xMark,
                         style: HeroIconStyle.mini,
+                        size: 14,
                       ),
                       style: IconButton.styleFrom(
-                        iconSize: 14,
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      iconSize: 20,
                       onPressed: () {},
                     ),
                   ],

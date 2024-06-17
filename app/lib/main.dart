@@ -38,11 +38,15 @@ class FileShareApp extends StatelessWidget {
       ).copyWith(
         titleLarge: GoogleFonts.poppins(
           fontWeight: FontWeight.w700,
-          fontSize: 26.0,
+          fontSize: 28.0,
         ),
         titleMedium: GoogleFonts.poppins(
           fontWeight: FontWeight.w700,
           fontSize: 18.0,
+        ),
+        titleSmall: GoogleFonts.poppins(
+          fontWeight: FontWeight.w700,
+          fontSize: 16.0,
         ),
         bodyLarge: GoogleFonts.poppins(
           fontWeight: FontWeight.w700,

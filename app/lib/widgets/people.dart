@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 
 class People extends StatefulWidget {
   final List<String> people;
+  final List<int> selected;
 
   const People({
     super.key,
     required this.people,
+    required this.selected,
   });
 
   @override
@@ -19,13 +21,14 @@ class _PeopleState extends State<People> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("People"),
-            Text("Select all"),
+            Text("People", style: Theme.of(context).textTheme.titleSmall),
+            const Text("Select all"),
           ],
         ),
+        const SizedBox(height: 10.0),
         Expanded(
           child: CupertinoScrollbar(
             child: ListView.separated(
@@ -40,7 +43,12 @@ class _PeopleState extends State<People> {
                         Container(
                           width: 2,
                           height: 15,
-                          color: Colors.red,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10000),
+                            color: widget.selected.contains(i)
+                                ? Theme.of(context).colorScheme.tertiary
+                                : Theme.of(context).colorScheme.secondary,
+                          ),
                         ),
                         const SizedBox(width: 10.0),
                         Text(widget.people[i]),
@@ -56,6 +64,11 @@ class _PeopleState extends State<People> {
               itemCount: widget.people.length,
             ),
           ),
+        ),
+        const SizedBox(height: 5.0),
+        Text(
+          "${widget.selected.length} selected",
+          style: Theme.of(context).textTheme.bodySmall,
         ),
       ],
     );
