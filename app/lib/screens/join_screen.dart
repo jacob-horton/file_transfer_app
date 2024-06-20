@@ -112,22 +112,7 @@ class _JoinScreenState extends State<JoinScreen> {
                       type: CustomButtonType.cta,
                       text: "Create",
                       heroIcon: HeroIcons.plusCircle,
-                      onPressed: () {
-                        // Unfocus any text fields so keyboard doesn't pop back up after opening modal
-                        FocusManager.instance.primaryFocus?.unfocus();
-
-                        showBottomModal(
-                          context: context,
-                          title: "Confirm send",
-                          // TODO: disable when sending/receiving
-                          canClose: true,
-                          child: const ConfirmSend(
-                            numPeople: 2,
-                            numImages: 24,
-                            numFiles: 6,
-                          ),
-                        );
-                      },
+                      onPressed: () {},
                     ),
                   ),
                 ],

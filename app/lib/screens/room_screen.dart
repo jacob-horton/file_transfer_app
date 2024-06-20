@@ -1,6 +1,8 @@
 import 'package:file_transfer/services/webrtc.dart';
 import 'package:file_transfer/widgets/attachments.dart';
+import 'package:file_transfer/widgets/bottom_modal.dart';
 import 'package:file_transfer/widgets/button.dart';
+import 'package:file_transfer/widgets/confirm_send.dart';
 import 'package:file_transfer/widgets/people.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -140,10 +142,25 @@ class _RoomScreenState extends State<RoomScreen> {
                   Expanded(
                     flex: 2,
                     child: CustomButton(
-                      onPressed: () {},
                       heroIcon: HeroIcons.paperAirplane,
                       text: "Send",
                       type: CustomButtonType.cta,
+                      onPressed: () {
+                        // Unfocus any text fields so keyboard doesn't pop back up after opening modal
+                        FocusManager.instance.primaryFocus?.unfocus();
+
+                        showBottomModal(
+                          context: context,
+                          title: "Confirm send",
+                          // TODO: disable when sending/receiving
+                          canClose: true,
+                          child: ConfirmSend(
+                            numPeople: selectedPeople.length,
+                            numImages: imagePaths.length,
+                            numFiles: filePaths.length,
+                          ),
+                        );
+                      },
                     ),
                   ),
                   Expanded(flex: 1, child: Container()),

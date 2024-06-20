@@ -41,6 +41,8 @@ class _PeopleState extends State<People> {
                       (i) => i,
                     ).toSet();
                   }
+
+                  widget.onSelectedChanged(selected);
                 });
               },
               child: Text(
