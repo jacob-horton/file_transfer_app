@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:file_transfer/services/webrtc.dart';
 import 'package:file_transfer/widgets/attachments.dart';
 import 'package:file_transfer/widgets/button.dart';
@@ -44,6 +42,7 @@ class _RoomScreenState extends State<RoomScreen> {
   ];
 
   bool loadingPhotos = false;
+  Set<int> selectedPeople = {};
 
   @override
   void initState() {
@@ -124,7 +123,14 @@ class _RoomScreenState extends State<RoomScreen> {
                 child: Divider(color: Theme.of(context).colorScheme.secondary),
               ),
               Expanded(
-                child: People(people: people, selected: const [1, 3, 4]),
+                child: People(
+                  people: people,
+                  onSelectedChanged: (newSelected) {
+                    setState(() {
+                      selectedPeople = newSelected;
+                    });
+                  },
+                ),
               ),
               const SizedBox(height: 25.0),
               Row(
