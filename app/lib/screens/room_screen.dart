@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_transfer/services/webrtc.dart';
 import 'package:file_transfer/widgets/attachments.dart';
 import 'package:file_transfer/widgets/button.dart';
@@ -40,6 +42,8 @@ class _RoomScreenState extends State<RoomScreen> {
     'Ross',
     'Monica'
   ];
+
+  bool loadingPhotos = false;
 
   @override
   void initState() {
@@ -112,6 +116,7 @@ class _RoomScreenState extends State<RoomScreen> {
                 child: Attachments(
                   imagePaths: imagePaths,
                   filePaths: filePaths,
+                  isLoadingMore: loadingPhotos,
                 ),
               ),
               Padding(
@@ -138,10 +143,15 @@ class _RoomScreenState extends State<RoomScreen> {
                   Expanded(flex: 1, child: Container()),
                   CustomButton(
                     onPressed: () async {
-                      final ImagePicker picker = ImagePicker();
-                      final List<XFile> images = await picker.pickMultiImage();
+                      setState(() {
+                        loadingPhotos = true;
+                      });
+
+                      final picker = ImagePicker();
+                      final images = await picker.pickMultiImage();
                       setState(() {
                         imagePaths.addAll(images.map((i) => i.path));
+                        loadingPhotos = false;
                       });
                     },
                     heroIcon: HeroIcons.plusCircle,

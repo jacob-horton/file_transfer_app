@@ -8,11 +8,13 @@ import 'package:heroicons/heroicons.dart';
 class Attachments extends StatefulWidget {
   final List<String> imagePaths;
   final List<String> filePaths;
+  final bool isLoadingMore;
 
   const Attachments({
     super.key,
     required this.imagePaths,
     required this.filePaths,
+    required this.isLoadingMore,
   });
 
   @override
@@ -32,14 +34,30 @@ class _AttachmentsState extends State<Attachments> {
           child: CupertinoScrollbar(
             child: ListView.separated(
               shrinkWrap: true,
-              itemBuilder: (context, i) => Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10.0),
-                  child: imagePreview(context, widget.imagePaths[i]),
-                ),
-              ),
+              itemBuilder: (context, i) {
+                if (widget.isLoadingMore && i == widget.imagePaths.length) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 20.0),
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                  );
+                }
+
+                return Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: imagePreview(context, widget.imagePaths[i]),
+                  ),
+                );
+              },
               separatorBuilder: (context, _) => const SizedBox(width: 10),
-              itemCount: widget.imagePaths.length,
+              itemCount:
+                  widget.imagePaths.length + (widget.isLoadingMore ? 1 : 0),
               scrollDirection: Axis.horizontal,
             ),
           ),
