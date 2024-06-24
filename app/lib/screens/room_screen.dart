@@ -1,4 +1,6 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:file_transfer/services/webrtc.dart';
+import 'package:file_transfer/widgets/add_button.dart';
 import 'package:file_transfer/widgets/attachments.dart';
 import 'package:file_transfer/widgets/bottom_modal.dart';
 import 'package:file_transfer/widgets/button.dart';
@@ -44,6 +46,7 @@ class _RoomScreenState extends State<RoomScreen> {
   ];
 
   bool loadingPhotos = false;
+  bool loadingFiles = false;
   Set<int> selectedPeople = {};
 
   @override
@@ -117,7 +120,8 @@ class _RoomScreenState extends State<RoomScreen> {
                 child: Attachments(
                   imagePaths: imagePaths,
                   filePaths: filePaths,
-                  isLoadingMore: loadingPhotos,
+                  isLoadingMorePhotos: loadingPhotos,
+                  isLoadingMoreFiles: loadingFiles,
                 ),
               ),
               Padding(
@@ -164,8 +168,8 @@ class _RoomScreenState extends State<RoomScreen> {
                     ),
                   ),
                   Expanded(flex: 1, child: Container()),
-                  CustomButton(
-                    onPressed: () async {
+                  AddButton(
+                    onAddImage: () async {
                       setState(() {
                         loadingPhotos = true;
                       });
@@ -177,8 +181,24 @@ class _RoomScreenState extends State<RoomScreen> {
                         loadingPhotos = false;
                       });
                     },
-                    heroIcon: HeroIcons.plusCircle,
-                    type: CustomButtonType.main,
+                    onAddFile: () async {
+                      setState(() {
+                        loadingFiles = true;
+                      });
+
+                      final picker = FilePicker.platform;
+                      final files = await picker.pickFiles(allowMultiple: true);
+                      if (files == null) {
+                        return;
+                      }
+
+                      setState(() {
+                        filePaths.addAll(files.files
+                            .where((i) => i.path != null)
+                            .map((i) => i.path!));
+                        loadingFiles = false;
+                      });
+                    },
                   ),
                 ],
               )

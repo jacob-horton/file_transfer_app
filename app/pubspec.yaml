@@ -43,6 +43,8 @@ dependencies:
   shared_preferences: ^2.2.3
   image_picker: ^1.1.2
   extended_image: ^8.2.1
+  file_picker: ^8.0.5
+  path: any
 
 dev_dependencies:
   flutter_test:
