@@ -1,8 +1,8 @@
+import 'dart:convert';
+
 import 'package:file_transfer/screens/room_screen.dart';
-import 'package:file_transfer/services/webrtc.dart';
-import 'package:file_transfer/widgets/bottom_modal.dart';
+import 'package:file_transfer/services/signalling_service.dart';
 import 'package:file_transfer/widgets/button.dart';
-import 'package:file_transfer/widgets/confirm_send.dart';
 import 'package:file_transfer/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
@@ -16,29 +16,22 @@ class JoinScreen extends StatefulWidget {
 }
 
 class _JoinScreenState extends State<JoinScreen> {
-  late WebRTCListener _webRTCListener;
+  final String websocketUrl = "ws://192.168.0.63:5000";
+
   dynamic incomingSDPOffer;
 
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _roomCodeController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _setupWebRTCHandler();
     _loadUsername();
   }
 
   void _loadUsername() async {
     final prefs = await SharedPreferences.getInstance();
     _usernameController.text = prefs.getString('username') ?? '';
-  }
-
-  _setupWebRTCHandler() async {
-    _webRTCListener = WebRTCListener(
-      onIncomingRequest: (offer) => setState(() => incomingSDPOffer = offer),
-    );
-
-    await _webRTCListener.setupIncomingConnection();
   }
 
   @override
@@ -76,6 +69,7 @@ class _JoinScreenState extends State<JoinScreen> {
                     CustomTextField(
                       hintText: "very-funny-elephant",
                       labelText: "Room code",
+                      controller: _roomCodeController,
                       // Pattern matches for word1-word2-word3-...
                       allowedPattern: RegExp(r"[a-zA-Z](-[a-zA-Z]+)*-?"),
                     ),
@@ -85,10 +79,28 @@ class _JoinScreenState extends State<JoinScreen> {
                       text: "Join",
                       heroIcon: HeroIcons.arrowRightCircle,
                       onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const RoomScreen(),
-                          ),
+                        SignallingService.instance.addListener("roomJoined",
+                            (id, event) {
+                          dynamic data = json.decode(event["data"]);
+                          String roomCode = data["roomName"];
+                          List<String> people =
+                              List<String>.from(data["people"] as List);
+                          SignallingService.instance.removeListener(id);
+
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => RoomScreen(
+                                roomCode: roomCode,
+                                initialPeople: people,
+                              ),
+                            ),
+                          );
+                        });
+
+                        SignallingService.instance.init(
+                          websocketUrl:
+                              "$websocketUrl/join-room/${_roomCodeController.text}",
+                          username: _usernameController.text,
                         );
                       },
                     ),
@@ -112,38 +124,61 @@ class _JoinScreenState extends State<JoinScreen> {
                       type: CustomButtonType.cta,
                       text: "Create",
                       heroIcon: HeroIcons.plusCircle,
-                      onPressed: () {},
+                      onPressed: () {
+                        SignallingService.instance.addListener("roomJoined",
+                            (id, event) {
+                          dynamic data = json.decode(event["data"]);
+                          String roomCode = data["roomName"];
+                          List<String> people =
+                              List<String>.from(data["people"] as List);
+                          SignallingService.instance.removeListener(id);
+
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => RoomScreen(
+                                roomCode: roomCode,
+                                initialPeople: people,
+                              ),
+                            ),
+                          );
+                        });
+
+                        SignallingService.instance.init(
+                          websocketUrl: "$websocketUrl/create-room",
+                          username: _usernameController.text,
+                        );
+                      },
                     ),
                   ),
                 ],
               ),
-              if (incomingSDPOffer != null)
-                Positioned(
-                  child: ListTile(
-                    title: const Text("Incoming files from TODO"),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          color: Colors.redAccent,
-                          onPressed: () {
-                            setState(() => incomingSDPOffer = null);
-                            // TODO: send rejected message
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.check),
-                          color: Colors.greenAccent,
-                          onPressed: () async {
-                            await _webRTCListener.acceptIncomingConnection();
-                            setState(() => incomingSDPOffer = null);
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                ),
+              // if (incomingSDPOffer != null)
+              //   Positioned(
+              //     child: ListTile(
+              //       title: const Text("Incoming files from TODO"),
+              //       trailing: Row(
+              //         mainAxisSize: MainAxisSize.min,
+              //         children: [
+              //           IconButton(
+              //             icon: const Icon(Icons.close),
+              //             color: Colors.redAccent,
+              //             onPressed: () {
+              //               setState(() => incomingSDPOffer = null);
+              //               // TODO: send rejected message
+              //             },
+              //           ),
+              //           IconButton(
+              //             icon: const Icon(Icons.check),
+              //             color: Colors.greenAccent,
+              //             onPressed: () async {
+              //               await _webRTCListener.acceptIncomingConnection();
+              //               setState(() => incomingSDPOffer = null);
+              //             },
+              //           )
+              //         ],
+              //       ),
+              //     ),
+              //   ),
             ],
           ),
         ),

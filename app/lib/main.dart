@@ -3,21 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'screens/join_screen.dart';
-import 'services/signalling_service.dart';
 
 void main() {
   runApp(const FileShareApp());
 }
 
 class FileShareApp extends StatelessWidget {
-  final String websocketUrl = "ws://192.168.0.63:5000";
-
   const FileShareApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    SignallingService.instance.init(websocketUrl: websocketUrl);
-
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,

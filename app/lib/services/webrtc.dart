@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'signalling_service.dart';
 
@@ -12,6 +13,7 @@ class WebRTCListener {
   dynamic _offer;
 
   Function(dynamic offer) onIncomingRequest;
+
   WebRTCListener({required this.onIncomingRequest});
 
   _setupPeerConnection() async {
@@ -27,7 +29,7 @@ class WebRTCListener {
     });
   }
 
-  reset() async {
+  dispose() async {
     for (var id in listenerIds) {
       SignallingService.instance.removeListener(id);
     }
@@ -36,7 +38,10 @@ class WebRTCListener {
     _rtcDataChannel = null;
     _rtcPeerConnection = null;
     _offer = null;
+  }
 
+  reset() async {
+    await dispose();
     await setupIncomingConnection();
   }
 
@@ -56,14 +61,14 @@ class WebRTCListener {
       _rtcDataChannel = channel;
     };
 
-    listenerIds.add(
-        SignallingService.instance.addListener("connectionRequest", (message) {
+    listenerIds.add(SignallingService.instance.addListener("connectionRequest",
+        (_, message) {
       _offer = message["data"];
       onIncomingRequest(_offer);
     }));
 
     listenerIds.add(
-      SignallingService.instance.addListener("iceCandidates", (data) async {
+      SignallingService.instance.addListener("iceCandidates", (_, data) async {
         for (var iceCandidate in data["data"]) {
           String candidate = iceCandidate["candidate"];
           String sdpMid = iceCandidate["id"];
@@ -77,9 +82,7 @@ class WebRTCListener {
           ));
         }
 
-        SignallingService.instance.socket!.sink.add(json.encode({
-          "type": "readyToReceive",
-        }));
+        SignallingService.instance.sendMessage("readyToReceive");
       }),
     );
   }
@@ -99,10 +102,10 @@ class WebRTCListener {
     _rtcPeerConnection!.setLocalDescription(answer);
 
     // send SDP answer to remote peer over signalling
-    SignallingService.instance.socket!.sink.add(json.encode({
-      "type": "connectionResponse",
-      "data": answer.toMap(),
-    }));
+    SignallingService.instance.sendMessage(
+      "connectionResponse",
+      data: answer.toMap(),
+    );
   }
 }
 
@@ -144,7 +147,7 @@ class WebRTCInitiator {
 
     listenerIds.add(
       SignallingService.instance.addListener("connectionResponse",
-          (event) async {
+          (_, event) async {
         // set SDP answer as remoteDescription for peerConnection
         await _rtcPeerConnection!.setRemoteDescription(
           RTCSessionDescription(
@@ -153,24 +156,26 @@ class WebRTCInitiator {
           ),
         );
 
-        SignallingService.instance.socket!.sink.add(json.encode({
-          "type": "iceCandidates",
-          "data": rtcIceCandidates
+        SignallingService.instance.sendMessage(
+          "iceCandidates",
+          data: rtcIceCandidates
               .map((c) => {
                     "id": c.sdpMid,
                     "label": c.sdpMLineIndex,
                     "candidate": c.candidate,
                   })
               .toList(),
-        }));
+        );
       }),
     );
 
     listenerIds.add(
-      SignallingService.instance.addListener("readyToReceive", (event) async {
+      SignallingService.instance.addListener("readyToReceive",
+          (_, event) async {
         // TODO: on connected callback
         await _rtcDataChannel!.send(RTCDataChannelMessage("yooo, connected"));
 
+        // TODO: handle concurrent modification of listeners
         for (var id in listenerIds) {
           SignallingService.instance.removeListener(id);
         }
@@ -191,9 +196,9 @@ class WebRTCInitiator {
     await _rtcPeerConnection!.setLocalDescription(offer);
 
     // request to send data
-    SignallingService.instance.socket!.sink.add(json.encode({
-      "type": 'connectionRequest',
-      "data": offer.toMap(),
-    }));
+    SignallingService.instance.sendMessage(
+      'connectionRequest',
+      data: offer.toMap(),
+    );
   }
 }

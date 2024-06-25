@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:file_picker/file_picker.dart';
+import 'package:file_transfer/services/signalling_service.dart';
 import 'package:file_transfer/services/webrtc.dart';
 import 'package:file_transfer/widgets/add_button.dart';
 import 'package:file_transfer/widgets/attachments.dart';
@@ -10,10 +13,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RoomScreen extends StatefulWidget {
-  const RoomScreen({super.key});
+  final String roomCode;
+  final List<String> initialPeople;
+
+  const RoomScreen({
+    super.key,
+    required this.roomCode,
+    required this.initialPeople,
+  });
 
   @override
   State<RoomScreen> createState() => _RoomScreenState();
@@ -23,27 +32,9 @@ class _RoomScreenState extends State<RoomScreen> {
   late WebRTCListener _webRTCListener;
   dynamic incomingSDPOffer;
 
-  final TextEditingController _usernameController = TextEditingController();
-
-  String roomCode = "very-funny-elephant";
-
   List<String> imagePaths = [];
-  List<String> filePaths = [
-    'example-file-1.png',
-    'invoice.pdf',
-    'important-document.txt',
-    'presentation.pptx',
-    'another-file.xlsx',
-  ];
-  List<String> people = [
-    'Aaron',
-    'Ellie',
-    'Enzo',
-    'George',
-    'Evie',
-    'Ross',
-    'Monica'
-  ];
+  List<String> filePaths = [];
+  List<String> people = [];
 
   bool loadingPhotos = false;
   bool loadingFiles = false;
@@ -52,13 +43,9 @@ class _RoomScreenState extends State<RoomScreen> {
   @override
   void initState() {
     super.initState();
-    _setupWebRTCHandler();
-    _loadUsername();
-  }
 
-  void _loadUsername() async {
-    final prefs = await SharedPreferences.getInstance();
-    _usernameController.text = prefs.getString('username') ?? '';
+    people = widget.initialPeople;
+    _setupWebRTCHandler();
   }
 
   _setupWebRTCHandler() async {
@@ -66,7 +53,18 @@ class _RoomScreenState extends State<RoomScreen> {
       onIncomingRequest: (offer) => setState(() => incomingSDPOffer = offer),
     );
 
+    SignallingService.instance.addListener("peopleUpdated", (_, message) {
+      List<String> people = List<String>.from(json.decode(message["data"]));
+      setState(() => this.people = people);
+    });
+
     await _webRTCListener.setupIncomingConnection();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _webRTCListener.dispose();
   }
 
   @override
@@ -90,7 +88,8 @@ class _RoomScreenState extends State<RoomScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(roomCode, style: Theme.of(context).textTheme.titleMedium),
+                Text(widget.roomCode,
+                    style: Theme.of(context).textTheme.titleMedium),
                 Padding(
                   padding: const EdgeInsets.only(right: 15.0),
                   child: IconButton(
@@ -101,7 +100,8 @@ class _RoomScreenState extends State<RoomScreen> {
                     ),
                     iconSize: 20,
                     onPressed: () async {
-                      await Clipboard.setData(ClipboardData(text: roomCode));
+                      await Clipboard.setData(
+                          ClipboardData(text: widget.roomCode));
                     },
                   ),
                 ),
