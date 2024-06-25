@@ -92,6 +92,7 @@ class _JoinScreenState extends State<JoinScreen> {
                               builder: (context) => RoomScreen(
                                 roomCode: roomCode,
                                 initialPeople: people,
+                                username: _usernameController.text,
                               ),
                             ),
                           );
@@ -138,6 +139,7 @@ class _JoinScreenState extends State<JoinScreen> {
                               builder: (context) => RoomScreen(
                                 roomCode: roomCode,
                                 initialPeople: people,
+                                username: _usernameController.text,
                               ),
                             ),
                           );

@@ -17,11 +17,13 @@ import 'package:image_picker/image_picker.dart';
 class RoomScreen extends StatefulWidget {
   final String roomCode;
   final List<String> initialPeople;
+  final String username;
 
   const RoomScreen({
     super.key,
     required this.roomCode,
     required this.initialPeople,
+    required this.username,
   });
 
   @override
@@ -44,7 +46,7 @@ class _RoomScreenState extends State<RoomScreen> {
   void initState() {
     super.initState();
 
-    people = widget.initialPeople;
+    people = widget.initialPeople.where((p) => p != widget.username).toList();
     _setupWebRTCHandler();
   }
 
@@ -55,7 +57,8 @@ class _RoomScreenState extends State<RoomScreen> {
 
     SignallingService.instance.addListener("peopleUpdated", (_, message) {
       List<String> people = List<String>.from(json.decode(message["data"]));
-      setState(() => this.people = people);
+      setState(() =>
+          this.people = people.where((p) => p != widget.username).toList());
     });
 
     await _webRTCListener.setupIncomingConnection();
