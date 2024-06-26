@@ -83,6 +83,7 @@ class _RoomScreenState extends State<RoomScreen> {
         }
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           toolbarHeight: 90,
@@ -179,6 +180,13 @@ class _RoomScreenState extends State<RoomScreen> {
                               numPeople: selectedPeople.length,
                               numImages: imagePaths.length,
                               numFiles: filePaths.length,
+                              onSend: () {
+                                WebRTCInitiator initiator = WebRTCInitiator();
+                                initiator.makeConnectionRequest(
+                                  filePaths.length,
+                                  imagePaths.length,
+                                );
+                              },
                             ),
                           );
                         },

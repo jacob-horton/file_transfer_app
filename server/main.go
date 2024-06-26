@@ -20,8 +20,8 @@ type Room = map[string]*websocket.Conn
 var rooms = map[string]Room{}
 
 type Message struct {
-	Event string `json:"event"`
-	Data  string `json:"data"`
+	Event string      `json:"event"`
+	Data  interface{} `json:"data"`
 }
 
 func forward(c *websocket.Conn, mt int, data []byte, roomName string) {
@@ -125,7 +125,7 @@ func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 		panic("first event was not 'init'")
 	}
 
-	name := message.Data
+	name := message.Data.(string)
 
 	// Create room with this user in it
 	// TODO: check for collisions
@@ -182,7 +182,7 @@ func handleJoinRoom(w http.ResponseWriter, r *http.Request) {
 		panic("first event was not 'init'")
 	}
 
-	name := message.Data
+	name := message.Data.(string)
 
 	// Create room with this user in it
 	parts := strings.Split(r.URL.Path, "/")

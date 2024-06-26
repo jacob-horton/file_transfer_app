@@ -7,11 +7,14 @@ class ConfirmSend extends StatefulWidget {
   final int numFiles;
   final int numImages;
 
+  final void Function() onSend;
+
   const ConfirmSend({
     super.key,
     required this.numPeople,
     required this.numFiles,
     required this.numImages,
+    required this.onSend,
   });
 
   @override
@@ -90,7 +93,10 @@ class _ConfirmSendState extends State<ConfirmSend> {
               child: CustomButton(
                 text: "Send",
                 heroIcon: HeroIcons.paperAirplane,
-                onPressed: () => {},
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  widget.onSend();
+                },
                 type: CustomButtonType.cta,
               ),
             ),

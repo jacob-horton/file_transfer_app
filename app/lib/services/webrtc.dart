@@ -63,7 +63,8 @@ class WebRTCListener {
 
     listenerIds.add(SignallingService.instance.addListener("connectionRequest",
         (_, message) {
-      _offer = message["data"];
+      _offer = message["data"]["offer"];
+      print(message["data"]["contents"]);
       onIncomingRequest(_offer);
     }));
 
@@ -186,7 +187,7 @@ class WebRTCInitiator {
   }
 
   // Outgoing
-  makeConnectionRequest() async {
+  makeConnectionRequest(int numFiles, int numPhotos) async {
     await _setupOutgoingConnection();
 
     // create SDP Offer
@@ -196,9 +197,13 @@ class WebRTCInitiator {
     await _rtcPeerConnection!.setLocalDescription(offer);
 
     // request to send data
-    SignallingService.instance.sendMessage(
-      'connectionRequest',
-      data: offer.toMap(),
-    );
+    // TODO: pass through who to send to
+    SignallingService.instance.sendMessage('connectionRequest', data: {
+      "offer": offer.toMap(),
+      "contents": {
+        "numFiles": numFiles,
+        "numPhotos": numPhotos,
+      }
+    });
   }
 }
