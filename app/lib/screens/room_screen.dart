@@ -7,6 +7,7 @@ import 'package:file_transfer/widgets/add_button.dart';
 import 'package:file_transfer/widgets/attachments.dart';
 import 'package:file_transfer/widgets/bottom_modal.dart';
 import 'package:file_transfer/widgets/button.dart';
+import 'package:file_transfer/widgets/confirm_receive.dart';
 import 'package:file_transfer/widgets/confirm_send.dart';
 import 'package:file_transfer/widgets/people.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,6 @@ class RoomScreen extends StatefulWidget {
 
 class _RoomScreenState extends State<RoomScreen> {
   late WebRTCListener _webRTCListener;
-  dynamic incomingSDPOffer;
 
   List<String> imagePaths = [];
   List<String> filePaths = [];
@@ -53,9 +53,25 @@ class _RoomScreenState extends State<RoomScreen> {
   }
 
   _setupWebRTCHandler() async {
-    _webRTCListener = WebRTCListener(
-      onIncomingRequest: (offer) => setState(() => incomingSDPOffer = offer),
-    );
+    _webRTCListener = WebRTCListener(onIncomingRequest: (data) {
+      // Unfocus any text fields so keyboard doesn't pop back up after opening modal
+      FocusManager.instance.primaryFocus?.unfocus();
+
+      // TODO: show who from
+      showBottomModal(
+        context: context,
+        title: "Confirm receive",
+        // TODO: disable when receiving
+        canClose: true,
+        child: ConfirmReceive(
+          numImages: data["contents"]["numImages"],
+          numFiles: data["contents"]["numFiles"],
+          onSend: () async {
+            await _webRTCListener.acceptIncomingConnection();
+          },
+        ),
+      );
+    });
 
     _peopleUpdatedId =
         SignallingService.instance.addListener("peopleUpdated", (_, message) {

@@ -2,31 +2,29 @@ import 'package:file_transfer/widgets/confirm_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
 
-class ConfirmSend extends StatefulWidget {
-  final int numPeople;
+class ConfirmReceive extends StatefulWidget {
   final int numFiles;
   final int numImages;
 
   final void Function() onSend;
 
-  const ConfirmSend({
+  const ConfirmReceive({
     super.key,
-    required this.numPeople,
     required this.numFiles,
     required this.numImages,
     required this.onSend,
   });
 
   @override
-  State<ConfirmSend> createState() => _ConfirmSendState();
+  State<ConfirmReceive> createState() => _ConfirmReceiveState();
 }
 
-class _ConfirmSendState extends State<ConfirmSend> {
+class _ConfirmReceiveState extends State<ConfirmReceive> {
   @override
   Widget build(BuildContext context) {
     return ConfirmModal(
-      confirmText: "Send",
-      confirmIcon: HeroIcons.paperAirplane,
+      confirmText: "Accept",
+      confirmIcon: HeroIcons.arrowDownTray,
       onConfirm: () {
         Navigator.of(context).pop();
         widget.onSend();
@@ -35,7 +33,7 @@ class _ConfirmSendState extends State<ConfirmSend> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("You are about to send"),
+          const Text("You are about to receive"),
           const SizedBox(height: 3.0),
           RichText(
             text: TextSpan(
@@ -67,22 +65,23 @@ class _ConfirmSendState extends State<ConfirmSend> {
               ],
             ),
           ),
-          const SizedBox(height: 10.0),
-          RichText(
-            text: TextSpan(
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-              children: [
-                const TextSpan(text: "To "),
-                TextSpan(
-                  text: widget.numPeople.toString(),
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                TextSpan(text: widget.numPeople == 1 ? " person" : " people"),
-              ],
-            ),
-          ),
+          // TODO: total size
+          // const SizedBox(height: 10.0),
+          // RichText(
+          //   text: TextSpan(
+          //     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+          //           color: Theme.of(context).colorScheme.onSurface,
+          //         ),
+          //     children: [
+          //       const TextSpan(text: "To "),
+          //       TextSpan(
+          //         text: widget.numPeople.toString(),
+          //         style: Theme.of(context).textTheme.bodyLarge,
+          //       ),
+          //       TextSpan(text: widget.numPeople == 1 ? " person" : " people"),
+          //     ],
+          //   ),
+          // ),
           const SizedBox(height: 20.0),
         ],
       ),

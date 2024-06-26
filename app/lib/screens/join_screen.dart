@@ -18,8 +18,6 @@ class JoinScreen extends StatefulWidget {
 class _JoinScreenState extends State<JoinScreen> {
   final String websocketUrl = "ws://192.168.0.63:5000";
 
-  dynamic incomingSDPOffer;
-
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _roomCodeController = TextEditingController();
 
@@ -157,33 +155,6 @@ class _JoinScreenState extends State<JoinScreen> {
                   ),
                 ],
               ),
-              // if (incomingSDPOffer != null)
-              //   Positioned(
-              //     child: ListTile(
-              //       title: const Text("Incoming files from TODO"),
-              //       trailing: Row(
-              //         mainAxisSize: MainAxisSize.min,
-              //         children: [
-              //           IconButton(
-              //             icon: const Icon(Icons.close),
-              //             color: Colors.redAccent,
-              //             onPressed: () {
-              //               setState(() => incomingSDPOffer = null);
-              //               // TODO: send rejected message
-              //             },
-              //           ),
-              //           IconButton(
-              //             icon: const Icon(Icons.check),
-              //             color: Colors.greenAccent,
-              //             onPressed: () async {
-              //               await _webRTCListener.acceptIncomingConnection();
-              //               setState(() => incomingSDPOffer = null);
-              //             },
-              //           )
-              //         ],
-              //       ),
-              //     ),
-              //   ),
             ],
           ),
         ),

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'signalling_service.dart';
 
@@ -12,7 +10,7 @@ class WebRTCListener {
 
   dynamic _offer;
 
-  Function(dynamic offer) onIncomingRequest;
+  Function(dynamic data) onIncomingRequest;
 
   WebRTCListener({required this.onIncomingRequest});
 
@@ -64,8 +62,7 @@ class WebRTCListener {
     listenerIds.add(SignallingService.instance.addListener("connectionRequest",
         (_, message) {
       _offer = message["data"]["offer"];
-      print(message["data"]["contents"]);
-      onIncomingRequest(_offer);
+      onIncomingRequest(message["data"]);
     }));
 
     listenerIds.add(
@@ -176,7 +173,6 @@ class WebRTCInitiator {
         // TODO: on connected callback
         await _rtcDataChannel!.send(RTCDataChannelMessage("yooo, connected"));
 
-        // TODO: handle concurrent modification of listeners
         for (var id in listenerIds) {
           SignallingService.instance.removeListener(id);
         }
@@ -187,7 +183,7 @@ class WebRTCInitiator {
   }
 
   // Outgoing
-  makeConnectionRequest(int numFiles, int numPhotos) async {
+  makeConnectionRequest(int numFiles, int numImages) async {
     await _setupOutgoingConnection();
 
     // create SDP Offer
@@ -202,7 +198,7 @@ class WebRTCInitiator {
       "offer": offer.toMap(),
       "contents": {
         "numFiles": numFiles,
-        "numPhotos": numPhotos,
+        "numImages": numImages,
       }
     });
   }
