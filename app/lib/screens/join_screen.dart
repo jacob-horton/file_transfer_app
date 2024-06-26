@@ -79,6 +79,10 @@ class _JoinScreenState extends State<JoinScreen> {
                       text: "Join",
                       heroIcon: HeroIcons.arrowRightCircle,
                       onPressed: () {
+                        String username = _usernameController.text;
+                        String roomCode = _roomCodeController.text;
+                        _roomCodeController.clear();
+
                         SignallingService.instance.addListener("roomJoined",
                             (id, event) {
                           dynamic data = json.decode(event["data"]);
@@ -92,16 +96,15 @@ class _JoinScreenState extends State<JoinScreen> {
                               builder: (context) => RoomScreen(
                                 roomCode: roomCode,
                                 initialPeople: people,
-                                username: _usernameController.text,
+                                username: username,
                               ),
                             ),
                           );
                         });
 
                         SignallingService.instance.init(
-                          websocketUrl:
-                              "$websocketUrl/join-room/${_roomCodeController.text}",
-                          username: _usernameController.text,
+                          websocketUrl: "$websocketUrl/join-room/$roomCode",
+                          username: username,
                         );
                       },
                     ),
